@@ -1,109 +1,69 @@
-// Quiet Clinical Editorial — page composition: asymmetric spreads, warm ivory, mineral green, restrained motion.
+// Webflow-inspired clinic brand direction — bold sans-serif type, teal/navy fields, open image-led sections, no repeated card grids.
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowUpRight, CalendarDays, ChevronDown, ChevronRight, Clock3, Instagram, Menu, Play, Sparkles, X } from "lucide-react";
+import { ArrowDownRight, ArrowRight, CalendarDays, Check, Clock3, Menu, Phone, Play, Plus, X } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const images = {
-  doctor: "https://images.unsplash.com/photo-1550831107-1553da8c8464?auto=format&fit=crop&w=1400&q=88",
+const img = {
+  hero: "https://images.unsplash.com/photo-1588776814546-daab30f310ce?auto=format&fit=crop&w=1600&q=88",
+  doctor: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=1200&q=88",
   clinic: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1400&q=88",
-  treatment: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1200&q=88",
-  detail: "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=1200&q=88",
+  detail: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1000&q=88",
+  smile: "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=1100&q=88",
 };
 
-const expertise = [
-  { no: "01", title: "Cosmetic dentistry", text: "Natural-looking refinements, designed to still feel like you.", image: images.treatment },
-  { no: "02", title: "Restorative care", text: "Thoughtful treatment for function, comfort, and confidence.", image: images.clinic },
-  { no: "03", title: "Smile design", text: "A considered plan shaped around your features and your life.", image: images.detail },
-  { no: "04", title: "Preventive care", text: "Small, consistent steps that keep your smile in good hands.", image: images.treatment },
+const services = [
+  ["01", "Preventive care", "Keep your smile healthy before a small concern becomes a bigger one."],
+  ["02", "Smile design", "Subtle, natural refinements designed around your face and your life."],
+  ["03", "Restorative dentistry", "Comfort, function, and confidence restored with a considered plan."],
+  ["04", "Clear aligners", "A discreet path to a healthier, more confident smile."],
 ];
 
-const steps = [
-  ["01", "Conversation", "We listen first — to your concerns, your history, and what matters to you."],
-  ["02", "Examination", "Digital diagnostics and a careful assessment make the next step clear."],
-  ["03", "Treatment plan", "A calm, transparent plan built around your comfort and your goals."],
-  ["04", "Care", "Precision treatment, delivered gently, with time for every question."],
+const faqs = [
+  ["I feel nervous about dental treatment.", "That is more common than you think. We start with a conversation, explain each step, and never rush you into a decision."],
+  ["Do I need a treatment plan before I book?", "No. Your first visit is a chance to understand what is happening and talk through the options clearly."],
+  ["Will my result look natural?", "Natural-looking results are always the goal. We plan around your features, your bite, and the way you want to feel."],
 ];
-
-function MagneticButton({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
-  return <button className={`magnetic-button ${dark ? "magnetic-button--dark" : ""}`}><span>{children}</span><ArrowUpRight size={15} strokeWidth={1.6} /></button>;
-}
 
 export default function Home() {
   const root = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const [openFaq, setOpenFaq] = useState(0);
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce) return;
-      const intro = gsap.timeline({ defaults: { ease: "power4.out" } });
-      intro.from(".nav-shell", { y: -24, opacity: 0, duration: 0.8 })
-        .from(".hero-kicker, .hero-title-line, .hero-copy, .hero-actions", { y: 34, opacity: 0, duration: 0.9, stagger: 0.08 }, "-=0.35")
-        .from(".hero-portrait", { scale: 1.08, clipPath: "inset(0 0 100% 0)", duration: 1.4 }, "-=1.05")
-        .from(".hero-rail, .hero-stats", { opacity: 0, x: 18, duration: 0.7, stagger: 0.12 }, "-=0.65");
-
-      gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
-        gsap.from(el, { y: 60, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 82%", once: true } });
-      });
-      gsap.utils.toArray<HTMLElement>(".image-reveal").forEach((el) => {
-        gsap.fromTo(el, { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: 1.25, ease: "power4.inOut", scrollTrigger: { trigger: el, start: "top 78%", once: true } });
-      });
-      gsap.to(".smile-photo", { yPercent: -9, ease: "none", scrollTrigger: { trigger: ".results-section", start: "top bottom", end: "bottom top", scrub: true } });
-      gsap.to(".contour-line", { strokeDashoffset: 0, ease: "none", scrollTrigger: { trigger: ".approach-section", start: "top 70%", end: "bottom 45%", scrub: true } });
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      gsap.timeline({ defaults: { ease: "power4.out" } })
+        .from(".brand-nav", { y: -20, opacity: 0, duration: .65 })
+        .from(".hero-tag, .hero-title, .hero-text, .hero-actions", { y: 38, opacity: 0, duration: .75, stagger: .08 }, "-=.3")
+        .from(".hero-image", { clipPath: "inset(0 0 100% 0)", duration: 1.1 }, "-=.9");
+      gsap.utils.toArray<HTMLElement>(".fade-up").forEach((el) => gsap.from(el, { y: 55, opacity: 0, duration: .85, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 83%", once: true } }));
+      gsap.utils.toArray<HTMLElement>(".line-fill").forEach((el) => gsap.fromTo(el, { scaleX: 0, transformOrigin: "left" }, { scaleX: 1, duration: 1, ease: "power3.inOut", scrollTrigger: { trigger: el, start: "top 85%", once: true } }));
+      gsap.to(".hero-image img", { yPercent: 10, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
     }, root);
     return () => ctx.revert();
   }, []);
+  const go = (id: string) => { setMenuOpen(false); document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); };
+  return <div ref={root} className="clinic-site">
+    <header className="brand-nav"><a className="logo" href="#top"><span className="logo-symbol">+</span><span><b>MORGAN</b><small>DENTAL STUDIO</small></span></a><nav className={menuOpen ? "nav-menu nav-menu-open" : "nav-menu"}><button onClick={() => go("doctor")}>About</button><button onClick={() => go("services")}>Services</button><button onClick={() => go("approach")}>Approach</button><button onClick={() => go("visit")}>Contact</button></nav><a className="nav-call" href="tel:+8801712345678"><Phone size={15} /> <span>+880 1712 345 678</span></a><button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">{menuOpen ? <X size={20} /> : <Menu size={20} />}</button></header>
+    <main id="top">
+      <section className="hero"><div className="hero-copy"><p className="hero-tag">Private dental care / Dhanmondi, Dhaka</p><h1>Feel good<br /><span>about your</span><br />smile.</h1><p className="hero-text">Modern dentistry with a softer approach. Personal care, clear answers, and results that look like you.</p><div className="hero-actions"><button className="primary-button" onClick={() => go("visit")}>Book an appointment <ArrowDownRight size={17} /></button><button className="play-button" onClick={() => go("approach")}><span><Play size={13} fill="currentColor" /></span> See how we care</button></div></div><div className="hero-image"><img src={img.hero} alt="Dentist caring for a patient" /><div className="hero-image-label"><span>01</span><span>Care that feels personal</span></div></div><div className="hero-corner">Scroll to explore <ArrowDownRight size={14} /></div></section>
 
-  const scrollTo = (id: string) => { setMenuOpen(false); document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); };
+      <section className="contact-band"><div><Phone size={20} /><span><small>Call the studio</small><strong>+880 1712 345 678</strong></span></div><div><Clock3 size={20} /><span><small>Opening hours</small><strong>Sun–Thu / 9:00–19:00</strong></span></div><div><CalendarDays size={20} /><span><small>First visit</small><strong>Easy to book, never rushed</strong></span></div></section>
 
-  return (
-    <div ref={root} className="site-shell">
-      <header className="nav-shell">
-        <a className="brand" href="#top" aria-label="Dr. Elena Morgan home"><span className="brand-mark">◌</span><span><strong>Dr. Elena Morgan</strong><small>Cosmetic & restorative dentistry</small></span></a>
-        <nav className={menuOpen ? "nav-links nav-links--open" : "nav-links"}>
-          {["about", "expertise", "approach", "results", "visit"].map((item) => <button key={item} onClick={() => scrollTo(item)}>{item}</button>)}
-        </nav>
-        <button className="nav-cta" onClick={() => scrollTo("visit")}>Book a consultation <ArrowUpRight size={14} /></button>
-        <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">{menuOpen ? <X size={20} /> : <Menu size={20} />}</button>
-      </header>
+      <section id="doctor" className="doctor-section section"><div className="doctor-image"><img src={img.doctor} alt="Dr. Elena Morgan" /><span>Dr. Elena Morgan / BDS, MSc</span></div><div className="doctor-copy fade-up"><p className="kicker">Meet your dentist</p><h2>Good dentistry<br /><em>starts with listening.</em></h2><p>I’m Dr. Elena Morgan. I created this studio for people who want excellent dental care without the cold, hurried feeling that can come with it.</p><p>Every appointment begins with time: time to understand what you need, time to explain your choices, and time to make a plan that feels right.</p><div className="doctor-sign"><span>Elena Morgan</span><small>Cosmetic & restorative dentistry</small></div><div className="credential-row"><div><b>12+</b><span>years clinical experience</span></div><div><b>3.5k</b><span>patients cared for</span></div><div><b>01</b><span>doctor-led plan</span></div></div></div></section>
 
-      <main id="top">
-        <section className="hero-section section-pad">
-          <div className="hero-rail"><span>Private practice / Dhaka</span><span className="rail-line" /><span>Scroll to explore</span></div>
-          <div className="hero-copy-wrap">
-            <p className="eyebrow hero-kicker">Advanced dentistry, intentional care</p>
-            <h1 className="hero-title"><span className="hero-title-line">The care behind</span><span className="hero-title-line">a <em>confident</em> smile.</span></h1>
-            <p className="hero-copy">Thoughtful cosmetic and restorative dentistry for people who want results that feel natural, personal, and entirely their own.</p>
-            <div className="hero-actions"><button className="magnetic-button magnetic-button--dark" onClick={() => scrollTo("visit")}><span>Plan your first visit</span><ArrowUpRight size={15} /></button><button className="text-link" onClick={() => scrollTo("about")}>Meet Dr. Morgan <ChevronRight size={16} /></button></div>
-          </div>
-          <div className="hero-visual"><div className="hero-portrait image-reveal"><img src={images.doctor} alt="Dr. Elena Morgan in her dental practice" /><div className="portrait-caption"><span>Elena Morgan</span><span>BDS, MSc / 12+ years</span></div></div><div className="hero-note"><Sparkles size={16} /><span>Natural results.<br />Carefully considered.</span></div></div>
-          <div className="hero-stats"><div><strong>12+</strong><span>years in practice</span></div><div><strong>3,500</strong><span>smiles cared for</span></div><div><strong>01</strong><span>patient-first promise</span></div></div>
-        </section>
+      <section id="services" className="services-section section"><div className="services-heading fade-up"><div><p className="kicker">What we do</p><h2>Care for every<br /><em>kind of smile.</em></h2></div><p>From a routine check-up to a complete smile transformation, we keep the process clear, calm, and personal.</p></div><div className="service-list">{services.map(([no, title, text]) => <button className="service-row fade-up" key={no}><span className="service-no">{no}</span><span className="service-title">{title}</span><span className="service-description">{text}</span><ArrowRight className="service-arrow" size={21} /></button>)}</div><div className="line-fill service-line" /></section>
 
-        <section id="about" className="about-section section-pad">
-          <div className="section-index"><span>01</span><span>About the doctor</span></div>
-          <div className="about-images"><div className="about-main image-reveal"><img src={images.clinic} alt="Calm, private dental clinic interior" /></div><div className="about-detail image-reveal"><img src={images.detail} alt="Dental details in the clinic" /></div><div className="hand-note">care, with<br /><em>intention</em></div><div className="contour-stamp contour-stamp--about">◌</div></div>
-          <div className="about-copy reveal"><p className="eyebrow">A quieter kind of dentistry</p><h2>Precision is important.<br /><em>So is how you feel.</em></h2><p>I believe every smile has a story. My role is to listen closely, explain clearly, and make the path to better oral health feel calm from the very first conversation.</p><div className="principles"><div><strong>01</strong><span>Listen first</span></div><div><strong>02</strong><span>Design with care</span></div><div><strong>03</strong><span>Keep it natural</span></div></div><div className="doctor-details"><div><span>Education</span><strong>BDS, MSc Restorative Dentistry</strong><small>University of Manchester</small></div><div><span>Memberships</span><strong>BOA · Aesthetic Dentistry</strong><small>Bangladesh Dental Society</small></div><div><span>Focus</span><strong>Cosmetic & restorative care</strong><small>Natural, long-term results</small></div></div><button className="text-link">Read my approach <ChevronRight size={16} /></button></div>
-        </section>
+      <section id="approach" className="approach-feature"><div className="approach-photo"><img src={img.clinic} alt="Inside Morgan Dental Studio" /><div className="image-play"><Play size={16} fill="currentColor" /></div></div><div className="approach-copy"><p className="kicker">The Morgan approach</p><h2>Less pressure.<br /><em>More confidence.</em></h2><div className="approach-points"><div><span>01</span><p><b>We explain</b> — no jargon, no guesswork, no hidden steps.</p></div><div><span>02</span><p><b>We personalise</b> — your treatment should fit your life, not the other way around.</p></div><div><span>03</span><p><b>We stay with you</b> — from first conversation to long-term care.</p></div></div><button className="text-button" onClick={() => go("visit")}>Start with a conversation <ArrowRight size={16} /></button></div></section>
 
-        <section className="trust-strip"><div><strong>12+</strong><span>Years of clinical practice</span></div><div><strong>3,500+</strong><span>Patients cared for</span></div><div><strong>01</strong><span>Doctor-led treatment plan</span></div><div><strong>9–7</strong><span>Sun–Thu clinic hours</span></div></section>
+      <section className="smile-section section"><div className="smile-heading fade-up"><p className="kicker">What patients ask us</p><h2>It’s okay to have<br /><em>questions.</em></h2></div><div className="faq-area"><div className="faq-list">{faqs.map(([q, a], i) => <div className={openFaq === i ? "faq faq-open" : "faq"} key={q}><button onClick={() => setOpenFaq(openFaq === i ? -1 : i)}><span>{q}</span>{openFaq === i ? <X size={17} /> : <Plus size={18} />}</button>{openFaq === i && <p>{a}</p>}</div>)}</div><div className="smile-photo"><img src={img.smile} alt="Natural smile detail" /><span>Natural results / considered care</span></div></div></section>
 
-        <section id="expertise" className="expertise-section section-pad">
-          <div className="expertise-intro reveal"><p className="eyebrow">Areas of expertise</p><h2>Specialized care,<br /><em>personalized for you.</em></h2><p>From subtle refinements to restorative care, each treatment begins with the same question: what would make a meaningful difference for you?</p><button className="outline-link">Explore treatments <ArrowUpRight size={14} /></button></div>
-          <div className="expertise-list">{expertise.map((item, index) => <article className={`expertise-card reveal expertise-card--${index + 1}`} key={item.no}><div className="expertise-card-image"><img src={item.image} alt="" /><span className="card-folio">{item.no} / 04</span></div><div className="expertise-card-meta"><h3>{item.title}</h3><p>{item.text}</p><span className="learn-more">Read the approach <ArrowUpRight size={14} /></span></div></article>)}</div><div className="expertise-mark">◌<span>carefully considered</span></div>
-        </section>
+      <section id="visit" className="visit-hero"><div className="visit-copy"><p className="kicker">Your next step</p><h2>Let’s make time<br /><em>for your smile.</em></h2><p>Tell us a little about what you are looking for. We’ll get back to you within one working day.</p><button className="light-button" onClick={() => go("booking")}>Book your first visit <ArrowRight size={17} /></button></div><div className="visit-info"><div><small>Studio</small><strong>House 18, Road 27<br />Dhanmondi, Dhaka</strong></div><div><small>Hours</small><strong>Sun–Thu / 9:00–19:00<br />Friday–Saturday / Closed</strong></div><div><small>Contact</small><strong>+880 1712 345 678<br />hello@morgandental.studio</strong></div></div></section>
 
-        <section id="results" className="results-section section-pad"><div className="results-copy reveal"><p className="eyebrow">A quiet case study</p><h2>Small changes.<br /><em>A real difference.</em></h2><p>Beautiful dentistry is not about looking “done”. It is about the quiet confidence that comes from feeling comfortable in your own smile.</p><div className="case-note"><span>Patient question</span><strong>“How can I look like myself,<br />only more rested?”</strong></div><button className="light-link">View case studies <ArrowUpRight size={14} /></button></div><div className="results-image image-reveal"><span className="results-folio">Case 01 / Natural smile design</span><img className="smile-photo" src={images.treatment} alt="Natural smile detail" /><div className="before-after"><span>Before</span><span className="ba-handle">↔</span><span>After</span></div><div className="results-stamp">◌<span>considered<br />care</span></div></div></section>
-
-        <section id="approach" className="approach-section section-pad"><div className="approach-heading reveal"><div><p className="eyebrow">Your journey</p><h2>A considered experience,<br /><em>from hello to smile.</em></h2></div><svg className="contour" viewBox="0 0 260 120" aria-hidden="true"><path className="contour-line" d="M3 65 C 45 15, 90 15, 130 65 S 215 115, 257 55" /></svg></div><div className="steps">{steps.map(([no, title, text]) => <div className="step reveal" key={no}><span className="step-no">{no}</span><div className="step-icon"><CalendarDays size={17} strokeWidth={1.2} /></div><h3>{title}</h3><p>{text}</p></div>)}</div></section>
-
-        <section id="visit" className="visit-section section-pad"><div className="visit-image"><img src={images.clinic} alt="A welcoming consultation space" /><div className="visit-overlay"><span>Ready when you are</span><strong>Let's make space<br />for your smile.</strong></div><div className="contour-stamp contour-stamp--visit">◌</div></div><div className="visit-panel"><p className="eyebrow">Plan your first visit</p><h2>A little time<br /><em>well spent.</em></h2><p>Tell us a little about what you are looking for. Our team will be in touch to find a time that works for you.</p><form onSubmit={(e) => e.preventDefault()}><label><span>Your name</span><input placeholder="e.g. Ayesha Rahman" /></label><label><span>Best way to reach you</span><input placeholder="Phone or email" /></label><label><span>What can we help with?</span><select defaultValue=""><option value="" disabled>Select an area</option><option>Cosmetic dentistry</option><option>Restorative care</option><option>General consultation</option></select></label><button className="magnetic-button magnetic-button--dark" type="submit"><span>Request a consultation</span><ArrowUpRight size={15} /></button></form><div className="visit-meta"><span><Clock3 size={15} /> Sun–Thu / 9:00–19:00</span><span><Instagram size={15} /> @elenamorgan.dentist</span><span className="visit-address">House 18, Road 27 / Dhanmondi, Dhaka</span></div></div>        </section>
-        <a className="mobile-booking" href="#visit"><span>Ready to plan your visit?</span><strong>Book a consultation <ArrowUpRight size={15} /></strong></a>
-      </main>
-      <footer className="footer"><div className="brand"><span className="brand-mark">◌</span><span><strong>Dr. Elena Morgan</strong><small>Cosmetic & restorative dentistry</small></span></div><p>Thoughtful care. Natural results.<br />Dhaka, Bangladesh.</p><span className="footer-end">© 2026 / All rights reserved</span></footer>
-    </div>
-  );
+      <section id="booking" className="booking-section section"><div><p className="kicker">Request a consultation</p><h2>Start with<br /><em>hello.</em></h2></div><form onSubmit={(e) => e.preventDefault()}><label>Your name<input placeholder="e.g. Ayesha Rahman" /></label><label>Phone or email<input placeholder="How should we reach you?" /></label><label>What can we help with?<select defaultValue=""><option value="" disabled>Select an area</option><option>General consultation</option><option>Cosmetic dentistry</option><option>Restorative care</option></select></label><button className="primary-button" type="submit">Send request <ArrowRight size={17} /></button></form></section>
+    </main>
+    <footer className="site-footer"><div className="logo"><span className="logo-symbol">+</span><span><b>MORGAN</b><small>DENTAL STUDIO</small></span></div><span>Thoughtful care / Natural results / Dhaka</span><span>© 2026 Morgan Dental Studio</span></footer><a className="mobile-cta" href="#booking">Book an appointment <ArrowRight size={16} /></a>
+  </div>;
 }
